@@ -299,7 +299,8 @@ input[type=file]{display:none}
 <script>
 // ── Config ──
 // REPLACE THIS with your Railway backend URL after deploying
-const BACKEND_URL = 'https://YOUR-RAILWAY-APP.up.railway.app';
+const HF_SPACE = 'Kalp97/KalpTranscript';
+const HF_API = `https://${HF_SPACE.replace('/', '--').toLowerCase()}.hf.space`;
 
 const modelData=[
   {name:'tiny',segs:1,spd:'Fastest',desc:'Best for quick clips. Lower accuracy on accents.'},
