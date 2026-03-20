@@ -455,62 +455,57 @@ let pollTimer=null;
 let clockTimer=null;
 let elapsed=0;
 
-function startPolling(jobId, md){
+function finishTranscript(transcript, md){
+  clearInterval(pollTimer);
+  clearInterval(clockTimer);
+  setStep(3);
+  setTimeout(()=>{
+    showResult(md);
+    document.getElementById('ap-words').textContent=transcript.trim().split(/\s+/).length;
+    document.getElementById('pulse-dot').style.animation='none';
+    document.getElementById('pulse-dot').style.background='#22c55e';
+    document.getElementById('status-txt').textContent='Done';
+    document.getElementById('t-status').style.color='#22c55e';
+    document.getElementById('t-text').textContent=transcript;
+    document.getElementById('trans-btn').disabled=false;
+  },400);
+}
+
+function startPolling(eventId, md){
   elapsed=0;
   const eta=modelETA[md.name]||30;
 
-  // update clock every second
   clockTimer=setInterval(()=>{
     elapsed++;
     document.getElementById('load-time').textContent=fmtTime(elapsed);
-
-    // progress bar: fill to 90% over ETA, then hold
-    const pct=Math.min(90, Math.round((elapsed/eta)*90));
+    const pct=Math.min(90,Math.round((elapsed/eta)*90));
     const bar=document.getElementById('load-bar');
     bar.className='load-bar';
     bar.style.width=pct+'%';
-
-    // update estimate
-    const remaining=Math.max(0, eta-elapsed);
-    if(elapsed<eta){
-      document.getElementById('load-estimate').textContent='~'+fmtTime(remaining)+' remaining';
-    } else {
-      document.getElementById('load-estimate').textContent='Taking longer than usual...';
-    }
-
-    // step progression based on elapsed vs ETA
-    if(elapsed<3) setStep(0);
-    else if(elapsed<eta*0.15) setStep(1);
+    const remaining=Math.max(0,eta-elapsed);
+    document.getElementById('load-estimate').textContent=elapsed<eta?'~'+fmtTime(remaining)+' remaining':'Taking longer than usual...';
+    if(elapsed<eta*0.15) setStep(1);
     else if(elapsed<eta*0.9) setStep(2);
-    else setStep(2); // stay on transcribing
+    else setStep(2);
   },1000);
 
-  // poll server every 3s
+  // Poll Hugging Face queue status
   pollTimer=setInterval(async()=>{
     try{
-      const res=await fetch(`${BACKEND_URL}/status/${jobId}`);
+      const res=await fetch(`${HF_API}/queue/status?event_id=${eventId}`);
       if(!res.ok){clearInterval(pollTimer);clearInterval(clockTimer);showError('Could not check job status');return;}
       const data=await res.json();
-      if(data.status==='done'){
-        clearInterval(pollTimer);
-        clearInterval(clockTimer);
-        setStep(3);
-        setTimeout(()=>{
-          showResult(md);
-          document.getElementById('ap-words').textContent=data.transcript.trim().split(/\s+/).length;
-          document.getElementById('pulse-dot').style.animation='none';
-          document.getElementById('pulse-dot').style.background='#22c55e';
-          document.getElementById('status-txt').textContent='Done';
-          document.getElementById('t-status').style.color='#22c55e';
-          document.getElementById('t-text').textContent=data.transcript;
-          document.getElementById('trans-btn').disabled=false;
-        },600);
-      }else if(data.status==='error'){
-        clearInterval(pollTimer);
-        clearInterval(clockTimer);
-        showError(data.error||'Transcription failed');
+
+      if(data.status==='COMPLETE'){
+        const transcript=data.output?.data?.[0]||'';
+        if(!transcript){showError('Empty transcript returned');return;}
+        finishTranscript(transcript, md);
+      } else if(data.status==='FAILED'){
+        clearInterval(pollTimer);clearInterval(clockTimer);
+        showError(data.output?.error||'Transcription failed on Hugging Face');
         document.getElementById('trans-btn').disabled=false;
       }
+      // else still processing — keep polling
     }catch(e){
       // network blip — keep polling
     }
@@ -534,12 +529,48 @@ async function doTranscribe(){
   try{
     document.getElementById('load-title').textContent='Uploading your file...';
     setStep(0);
-    const res=await fetch(`${BACKEND_URL}/transcribe`,{method:'POST',body:formData});
-    if(!res.ok){const e=await res.json();throw new Error(e.error||'Server error');}
-    const data=await res.json();
-    document.getElementById('load-title').textContent='Transcribing — '+md.name+' model';
+
+    // Step 1 — upload file to Hugging Face, get a temp URL back
+    const uploadRes = await fetch(`${HF_API}/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    if(!uploadRes.ok) throw new Error('Upload failed — is the Hugging Face space running?');
+    const uploadedPaths = await uploadRes.json();
+    const filePath = uploadedPaths[0];
+
     setStep(1);
-    startPolling(data.job_id, md);
+    document.getElementById('load-title').textContent='Queuing transcription...';
+
+    // Step 2 — call the Gradio predict endpoint
+    const predictRes = await fetch(`${HF_API}/run/predict`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        data: [
+          {"name": filePath, "is_file": true},
+          md.name,
+          lang === 'Auto' ? 'Auto Detect' : lang,
+          tsOn,
+          trVal === 'Off' ? 'Transcribe' : 'Translate to English'
+        ]
+      })
+    });
+    if(!predictRes.ok) throw new Error('Transcription request failed');
+    const predictData = await predictRes.json();
+
+    // Gradio returns job URL for queued jobs
+    if(predictData.event_id){
+      document.getElementById('load-title').textContent='Transcribing — '+md.name+' model';
+      setStep(2);
+      startPolling(predictData.event_id, md);
+    } else if(predictData.data){
+      // instant result
+      finishTranscript(predictData.data[0], md);
+    } else {
+      throw new Error('Unexpected response from Hugging Face');
+    }
+
   }catch(err){
     showError(err.message);
     btn.disabled=false;
