@@ -305,7 +305,6 @@ let GradioClient = null;
   try {
     const mod = await import('https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js');
     GradioClient = mod.Client;
-    window._hf = mod.handle_file;
   } catch(e) {
     console.warn('Gradio client preload failed, will retry on transcribe');
   }
@@ -514,7 +513,6 @@ async function doTranscribe(){
     if(!GradioClient){
       const mod = await import('https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js');
       GradioClient = mod.Client;
-      window._hf = mod.handle_file;
     }
 
     const client = await GradioClient.connect(HF_SPACE, {
@@ -536,9 +534,8 @@ async function doTranscribe(){
 
     // Call Gradio API — inputs must match app.py order exactly:
     // [file, model_choice, language, timestamps, translate]
-    const hf = window._hf || (f => f);
     const result = await client.predict('/run', [
-      hf(selFile),
+      selFile,
       MODEL_STRINGS[md.name],
       lang === 'Auto' ? 'Auto Detect' : lang,
       tsOn,
