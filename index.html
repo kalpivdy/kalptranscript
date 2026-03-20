@@ -13,34 +13,35 @@ html,body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;
 
 /* NAV */
 nav{display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:56px;border-bottom:1px solid var(--border)}
-.logo{font-size:14px;font-weight:600;letter-spacing:-0.02em;display:flex;align-items:baseline;gap:1px}
-.logo em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--blue-light);font-size:15px}
+/* FIX 1: Logo slightly bigger */
+.logo{font-size:17px;font-weight:600;letter-spacing:-0.02em;display:flex;align-items:baseline;gap:1px;cursor:pointer;text-decoration:none;color:var(--text)}
+.logo em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--blue-light);font-size:18px}
 .nav-meta{font-size:10px;color:#555;letter-spacing:0.14em;text-transform:uppercase}
 
 /* UPLOAD STATE */
-#upload-state{display:flex;flex-direction:column;align-items:center;padding:88px 40px 72px;transition:all 0.3s}
+#upload-state{display:flex;flex-direction:column;align-items:center;padding:72px 24px 60px;transition:all 0.3s}
 #upload-state.hidden{display:none}
 .eyebrow{font-size:10px;color:var(--blue);letter-spacing:0.22em;text-transform:uppercase;margin-bottom:20px;border:1px solid var(--accent-border);border-radius:100px;padding:5px 16px;background:var(--accent-bg)}
 .hero-title{font-size:48px;font-weight:600;letter-spacing:-0.04em;color:var(--text);text-align:center;line-height:1.05;margin-bottom:10px}
 .hero-title em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--blue-light)}
-.hero-sub{font-size:13px;color:var(--dim);text-align:center;margin-bottom:48px;font-weight:300}
+.hero-sub{font-size:13px;color:var(--dim);text-align:center;margin-bottom:40px;font-weight:300}
 
 /* DROPZONE */
-.dropzone{width:100%;max-width:540px;background:var(--surface);border:1px dashed #1a2d3a;border-radius:14px;padding:44px 32px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
+.dropzone{width:100%;max-width:540px;background:var(--surface);border:1px dashed #1a2d3a;border-radius:14px;padding:40px 24px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
 .dropzone:hover,.dropzone.active{border-color:var(--blue);background:#07101c}
 .dropzone:hover .dz-icon,.dropzone.active .dz-icon{stroke:var(--blue)}
 .dz-icon{width:32px;height:32px;stroke:#252525;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin:0 auto 14px;display:block;transition:stroke 0.2s}
 .dz-main{font-size:13px;color:#888;margin-bottom:5px}
 .dz-main span{color:var(--blue-light)}
 .dz-hint{font-size:11px;color:#555;letter-spacing:0.05em}
-.dz-file{display:none;align-items:center;gap:10px;justify-content:center}
+.dz-file{display:none;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap}
 .dz-file-icon{width:30px;height:30px;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .dz-file-icon svg{width:14px;height:14px;stroke:var(--blue-light);fill:none;stroke-width:2}
-.dz-filename{font-size:13px;color:var(--text)}
+.dz-fname{font-size:13px;color:var(--text);word-break:break-all;text-align:left}
 input[type=file]{display:none}
 
-/* CONTROLS ROW */
-.controls{display:flex;align-items:center;gap:8px;margin-top:20px;flex-wrap:nowrap;max-width:540px;width:100%}
+/* FIX 6: CONTROLS ROW — mobile responsive wrap */
+.controls{display:flex;align-items:center;gap:8px;margin-top:18px;flex-wrap:wrap;justify-content:center;max-width:540px;width:100%}
 .dd-wrap{position:relative}
 .ctrl-pill{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:#aaa;display:flex;align-items:center;gap:6px;cursor:pointer;transition:all 0.15s;white-space:nowrap;user-select:none;font-family:'Geist',sans-serif}
 .ctrl-pill:hover,.ctrl-pill.open{border-color:#2a2a2a;color:var(--text)}
@@ -66,24 +67,24 @@ input[type=file]{display:none}
 .dd-chk{width:12px;height:12px;stroke:var(--blue-light);fill:none;stroke-width:2.5;flex-shrink:0;display:none}
 .dd-item.sel .dd-chk{display:block}
 
-/* TRANSCRIBE BUTTON */
-.trans-btn{background:var(--text);color:#000;border:none;border-radius:8px;padding:8px 20px;font-family:'Geist',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.18s;display:none;white-space:nowrap}
+/* FIX 6: TRANSCRIBE BUTTON — full width on mobile */
+.trans-btn{background:var(--text);color:#000;border:none;border-radius:8px;padding:10px 20px;font-family:'Geist',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.18s;display:none;white-space:nowrap}
 .trans-btn:hover{background:var(--blue-light)}
 .trans-btn.show{display:block}
 .trans-btn:disabled{opacity:0.5;cursor:not-allowed}
 
-/* Loading overlay */
-.loading-overlay{display:none;flex-direction:column;align-items:center;gap:20px;padding:48px 40px;width:100%;max-width:540px}
+/* LOADING OVERLAY */
+.loading-overlay{display:none;flex-direction:column;align-items:center;gap:16px;padding:40px 24px;width:100%;max-width:540px}
 .loading-overlay.show{display:flex}
 .load-title{font-size:13px;color:#ededed;font-weight:500;text-align:center}
-.load-sub{font-size:12px;color:#444;text-align:center;line-height:1.6;max-width:380px}
+.load-sub{font-size:11px;color:#444;text-align:center;line-height:1.6;max-width:360px}
 .load-bar-wrap{width:100%;height:3px;background:#1a1a1a;border-radius:100px;overflow:hidden}
 .load-bar{height:100%;background:var(--blue);border-radius:100px;width:0%;transition:width 0.8s ease}
 .load-bar.indeterminate{animation:indeterminate 1.8s ease-in-out infinite}
 @keyframes indeterminate{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
 .load-meta{display:flex;align-items:center;justify-content:space-between;width:100%}
 .load-time{font-size:11px;color:#555;font-family:monospace}
-.load-estimate{font-size:11px;color:#2a4a6a;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:6px;padding:3px 10px}
+.load-estimate{font-size:11px;color:#2a4a6a;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:6px;padding:3px 10px;text-align:right;max-width:200px}
 .load-steps{display:flex;flex-direction:column;gap:8px;width:100%}
 .load-step{display:flex;align-items:center;gap:10px;font-size:12px;color:#2a2a2a;transition:color 0.3s}
 .load-step.active{color:#ededed}
@@ -91,66 +92,86 @@ input[type=file]{display:none}
 .load-step-dot{width:6px;height:6px;border-radius:50%;background:#1a1a1a;flex-shrink:0;transition:all 0.3s}
 .load-step.active .load-step-dot{background:var(--blue);animation:pulse 1s ease-in-out infinite}
 .load-step.done .load-step-dot{background:#22c55e;animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 
 /* RESULT STATE */
 #result-state{display:none;flex-direction:column}
 #result-state.show{display:flex}
-.result-nav{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;border-bottom:1px solid var(--border)}
-.result-nav-l{display:flex;align-items:center;gap:12px}
-.back-btn{font-size:12px;color:var(--dim);cursor:pointer;display:flex;align-items:center;gap:5px;transition:color 0.15s;border:none;background:none;font-family:'Geist',sans-serif;padding:0}
-.back-btn:hover{color:var(--text)}
-.back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
-.file-chip{font-size:11px;color:var(--blue);background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:100px;padding:4px 12px}
-.result-actions{display:flex;gap:8px}
-.act-btn{font-size:11px;color:var(--dim);border:1px solid var(--border);background:transparent;border-radius:8px;padding:7px 16px;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s}
+
+/* FIX 4,5,7: result nav — mobile friendly */
+.result-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);gap:8px;flex-wrap:wrap}
+.result-nav-l{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+
+/* FIX 4: "Convert new file" highlighted */
+.back-btn{font-size:12px;font-weight:600;color:var(--blue-light);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.15s;border:1px solid var(--accent-border);background:var(--accent-bg);font-family:'Geist',sans-serif;padding:7px 12px;border-radius:8px;white-space:nowrap;flex-shrink:0}
+.back-btn:hover{background:#0a1628;color:#fff;border-color:var(--blue)}
+.back-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.file-chip{font-size:11px;color:var(--blue);background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:100px;padding:4px 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.result-actions{display:flex;gap:8px;flex-shrink:0}
+.act-btn{font-size:11px;color:var(--dim);border:1px solid var(--border);background:transparent;border-radius:8px;padding:7px 14px;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s;white-space:nowrap}
 .act-btn:hover{border-color:#333;color:var(--text)}
 .act-btn.primary{background:var(--text);color:#000;border-color:var(--text)}
 .act-btn.primary:hover{background:var(--blue-light);border-color:var(--blue-light)}
 
-/* RESULT BODY */
-.result-body{display:grid;grid-template-columns:1fr 320px;min-height:600px}
-.transcript-main{padding:40px 48px;border-right:1px solid var(--border)}
-.t-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+/* FIX 7: RESULT BODY — stack on mobile */
+.result-body{display:grid;grid-template-columns:1fr 300px;min-height:500px}
+.transcript-main{padding:32px 28px;border-right:1px solid var(--border);min-width:0}
+.t-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .t-title{font-size:11px;font-weight:500;color:#333;letter-spacing:0.14em;text-transform:uppercase}
-.t-status{font-size:11px;color:var(--blue);display:flex;align-items:center;gap:6px}
+.t-status{font-size:11px;color:var(--blue);display:flex;align-items:center;gap:6px;flex-shrink:0}
 .pulse{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 1.5s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
-#t-text{font-size:14px;color:var(--muted);line-height:1.9;font-weight:300;min-height:400px;white-space:pre-wrap}
-.cursor{display:inline-block;width:2px;height:14px;background:var(--blue);margin-left:1px;vertical-align:middle;animation:blink 0.9s step-end infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+#t-text{font-size:14px;color:var(--muted);line-height:1.9;font-weight:300;white-space:pre-wrap;word-break:break-word}
 
 /* ACCENT PANEL */
-.accent-panel{background:var(--accent-bg);border-left:1px solid var(--accent-border);padding:32px 28px;display:flex;flex-direction:column;gap:22px}
-.ap-lbl{font-size:10px;font-weight:500;color:#1e3a5f;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px}
-.ap-stat{font-size:30px;font-weight:600;color:var(--blue);letter-spacing:-0.03em}
-.ap-sub{font-size:11px;color:#1e3a5f;margin-top:4px}
+.accent-panel{background:var(--accent-bg);border-left:1px solid var(--accent-border);padding:28px 22px;display:flex;flex-direction:column;gap:20px}
+.ap-lbl{font-size:10px;font-weight:500;color:#1e3a5f;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px}
+.ap-stat{font-size:28px;font-weight:600;color:var(--blue);letter-spacing:-0.03em}
+.ap-sub{font-size:11px;color:#1e3a5f;margin-top:3px}
 .ap-div{height:1px;background:#0d1d30}
-.model-card{background:#0a1628;border:1px solid var(--accent-border);border-radius:10px;padding:16px}
-.mc-name{font-size:13px;font-weight:600;color:var(--blue-light);margin-bottom:8px}
-.mc-spd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.model-card{background:#0a1628;border:1px solid var(--accent-border);border-radius:10px;padding:14px}
+.mc-name{font-size:13px;font-weight:600;color:var(--blue-light);margin-bottom:6px}
+.mc-spd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .mc-bar{display:flex;gap:3px}
-.mc-seg{width:20px;height:4px;border-radius:2px;background:#0d1d30}
+.mc-seg{width:18px;height:4px;border-radius:2px;background:#0d1d30}
 .mc-seg.on{background:var(--blue)}
 .mc-spd-lbl{font-size:10px;color:var(--blue)}
-.mc-desc{font-size:11px;color:#1e3a5f;line-height:1.6}
-.sl-list{display:flex;flex-direction:column;gap:9px}
+.mc-desc{font-size:11px;color:#1e3a5f;line-height:1.5}
+.sl-list{display:flex;flex-direction:column;gap:8px}
 .sl-row{display:flex;align-items:center;justify-content:space-between;font-size:11px}
 .sl-k{color:#1e3a5f}
 .sl-v{color:var(--blue);font-weight:500}
-
-/* PROCESSING OVERLAY */
-.processing{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--blue);margin-top:12px}
-.spin{width:14px;height:14px;border:2px solid #1a2d4a;border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ERROR */
 .error-box{background:#1a0a0a;border:1px solid #3a1010;border-radius:10px;padding:16px;font-size:13px;color:#f08080;line-height:1.6}
+
+/* FIX 6+7: MOBILE RESPONSIVE */
+@media(max-width:640px){
+  nav{padding:0 20px}
+  #upload-state{padding:48px 16px 40px}
+  .hero-title{font-size:32px}
+  .dropzone{padding:28px 16px}
+  .controls{gap:6px}
+  .ctrl-pill,.toggle-pill{font-size:11px;padding:7px 10px}
+  .trans-btn.show{width:100%;margin-top:4px;padding:12px}
+  .result-nav{padding:12px 16px}
+  .result-body{grid-template-columns:1fr;min-height:auto}
+  .transcript-main{padding:20px 16px;border-right:none;border-bottom:1px solid var(--border)}
+  .accent-panel{border-left:none;border-top:1px solid var(--accent-border);padding:20px 16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .ap-div{display:none}
+  .loading-overlay{padding:32px 16px}
+  .file-chip{max-width:120px}
+}
+@media(max-width:400px){
+  .hero-title{font-size:26px}
+  .result-actions{width:100%;justify-content:flex-end}
+  .result-nav{flex-direction:column;align-items:flex-start}
+  .result-nav-l{width:100%}
+}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="logo">Kalp&nbsp;<em>Transcript</em></div>
+  <!-- FIX 2: Logo click reloads page -->
+  <a class="logo" href="javascript:location.reload()">Kalp&nbsp;<em>Transcript</em></a>
   <span class="nav-meta">by Kalpi Edition</span>
 </nav>
 
@@ -166,12 +187,12 @@ input[type=file]{display:none}
     <div class="dz-hint" id="dz-hint">MP4 · MOV · MKV · WebM · MP3 · WAV · M4A · FLAC · AAC · OGG</div>
     <div class="dz-file" id="dz-file">
       <div class="dz-file-icon"><svg viewBox="0 0 16 16"><path d="M3 2h7l3 3v9H3z"/><path d="M10 2v3h3"/></svg></div>
-      <span id="dz-fname"></span>
+      <span class="dz-fname" id="dz-fname"></span>
     </div>
     <input type="file" id="file-input" accept=".mp4,.mov,.mkv,.webm,.avi,.mp3,.wav,.m4a,.flac,.ogg,.aac,video/mp4,video/quicktime,video/x-matroska,video/webm,audio/mpeg,audio/wav,audio/mp4,audio/flac,audio/ogg,audio/aac">
   </div>
 
-  <div class="controls" style="justify-content:center">
+  <div class="controls">
     <!-- Model -->
     <div class="dd-wrap">
       <div class="ctrl-pill" id="model-pill" onclick="toggleMenu('model-menu','model-pill')">
@@ -185,7 +206,6 @@ input[type=file]{display:none}
         <div class="dd-item" onclick="selModel(3,this)">medium<div class="dd-right"><div class="spd-bar"><div class="spd-seg on"></div><div class="spd-seg on"></div><div class="spd-seg on"></div><div class="spd-seg on"></div></div><span class="spd-lbl">Best</span><svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div></div>
       </div>
     </div>
-
     <!-- Language -->
     <div class="dd-wrap">
       <div class="ctrl-pill" id="lang-pill" onclick="toggleMenu('lang-menu','lang-pill')">
@@ -203,12 +223,10 @@ input[type=file]{display:none}
         <div class="dd-item" onclick="selLang('Chinese',this)">Chinese<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
       </div>
     </div>
-
     <!-- Timestamps -->
     <div class="toggle-pill" id="ts-pill" onclick="toggleTs()">
       <div class="tdot" id="ts-dot"></div>Timestamps
     </div>
-
     <!-- Translate -->
     <div class="dd-wrap">
       <div class="ctrl-pill" id="tr-pill" onclick="toggleMenu('tr-menu','tr-pill')">
@@ -220,9 +238,9 @@ input[type=file]{display:none}
         <div class="dd-item" onclick="selTr('→ English',this)">Translate to English<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
       </div>
     </div>
-
     <button class="trans-btn" id="trans-btn" onclick="doTranscribe()">Transcribe →</button>
   </div>
+
   <div class="loading-overlay" id="processing">
     <div class="load-title" id="load-title">Uploading your file...</div>
     <div class="load-bar-wrap"><div class="load-bar indeterminate" id="load-bar"></div></div>
@@ -236,7 +254,7 @@ input[type=file]{display:none}
       <div class="load-step" id="lstep2"><div class="load-step-dot"></div>Transcribing audio</div>
       <div class="load-step" id="lstep3"><div class="load-step-dot"></div>Finalising transcript</div>
     </div>
-    <div class="load-sub" id="load-sub">Keep this tab open — closing it will cancel the transcription.</div>
+    <div class="load-sub">Keep this tab open — closing it will cancel the transcription.</div>
   </div>
 </div>
 
@@ -244,13 +262,15 @@ input[type=file]{display:none}
 <div id="result-state">
   <div class="result-nav">
     <div class="result-nav-l">
+      <!-- FIX 4: "Convert new file" highlighted -->
       <button class="back-btn" onclick="goBack()">
-        <svg viewBox="0 0 14 14"><path d="M8 2L3 7l5 5"/><line x1="3" y1="7" x2="13" y2="7"/></svg>New file
+        <svg viewBox="0 0 14 14"><path d="M8 2L3 7l5 5"/><line x1="3" y1="7" x2="13" y2="7"/></svg>Convert new file
       </button>
       <div class="file-chip" id="file-chip"></div>
     </div>
     <div class="result-actions">
-      <button class="act-btn" onclick="copyText()">Copy</button>
+      <!-- FIX 5: "Copy text" -->
+      <button class="act-btn" onclick="copyText()">Copy text</button>
       <button class="act-btn primary" onclick="downloadTxt()">Download .txt</button>
     </div>
   </div>
@@ -276,10 +296,7 @@ input[type=file]{display:none}
         <div class="ap-lbl">Model</div>
         <div class="model-card">
           <div class="mc-name" id="ap-model">tiny</div>
-          <div class="mc-spd">
-            <div class="mc-bar" id="ap-bar"></div>
-            <span class="mc-spd-lbl" id="ap-spd">Fastest</span>
-          </div>
+          <div class="mc-spd"><div class="mc-bar" id="ap-bar"></div><span class="mc-spd-lbl" id="ap-spd">Fastest</span></div>
           <div class="mc-desc" id="ap-desc">Best for quick clips.</div>
         </div>
       </div>
@@ -299,18 +316,14 @@ input[type=file]{display:none}
 <script type="module">
 const HF_SPACE = 'Kalp97/KalpTranscript';
 
-// Pre-load Gradio client at page start so it's ready when user hits Transcribe
 let GradioClient = null;
 (async () => {
   try {
     const mod = await import('https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js');
     GradioClient = mod.Client;
-  } catch(e) {
-    console.warn('Gradio client preload failed, will retry on transcribe');
-  }
+  } catch(e) { console.warn('Gradio preload failed'); }
 })();
 
-// Exact model strings matching app.py dropdown choices
 const MODEL_STRINGS = {
   tiny:   'tiny   — Fastest',
   base:   'base   — Fast',
@@ -324,12 +337,20 @@ const modelData = [
   {name:'small', segs:3, spd:'Balanced', desc:'High accuracy. Recommended for most use cases.'},
   {name:'medium',segs:4, spd:'Best',     desc:'Best accuracy. Slower — ideal for complex audio.'}
 ];
-const modelETA = {tiny:15, base:25, small:50, medium:120};
+
+// FIX 3: Dynamic ETA — seconds per MB per model (empirical estimates)
+// tiny ~1s/MB, base ~2s/MB, small ~4s/MB, medium ~10s/MB
+// Plus fixed overhead of ~10s
+const MB_PER_SEC = {tiny:1, base:2, small:4, medium:10};
+
+function calcETA(fileSizeMB, modelName){
+  const rate = MB_PER_SEC[modelName] || 2;
+  return Math.round(fileSizeMB * rate + 10);
+}
 
 let mi=0, lang='Auto', tsOn=false, trVal='Off', selFile=null;
 let clockTimer=null, elapsed=0;
 
-// ── Dropdown helpers ──
 function toggleMenu(mid, pid){
   const isOpen = document.getElementById(mid).classList.contains('open');
   closeAll();
@@ -344,229 +365,195 @@ function closeAll(){
 }
 document.addEventListener('click', e=>{ if(!e.target.closest('.dd-wrap')) closeAll(); });
 
-function selModel(i, el){
-  mi = i;
-  document.querySelectorAll('#model-menu .dd-item').forEach((d,j)=>d.className='dd-item'+(j===i?' sel':''));
-  document.getElementById('mval').textContent = modelData[i].name;
-  closeAll();
-}
-function selLang(val, el){
-  lang = val;
-  document.querySelectorAll('#lang-menu .dd-item').forEach(d=>{
-    const m = d.textContent.trim().startsWith(val)||(val==='Auto'&&d.textContent.includes('Auto'));
-    d.className = 'dd-item'+(m?' sel':'');
-  });
-  document.getElementById('lval').textContent = val==='Auto detect'?'Auto':val;
-  closeAll();
-}
-function selTr(val, el){
-  trVal = val;
-  document.querySelectorAll('#tr-menu .dd-item').forEach(d=>{
-    const m = (val==='Off'&&d.textContent.trim()==='Off')||(val!=='Off'&&d.textContent.includes('English'));
-    d.className = 'dd-item'+(m?' sel':'');
-  });
-  document.getElementById('trval').textContent = val;
-  closeAll();
-}
-function toggleTs(){
-  tsOn = !tsOn;
-  document.getElementById('ts-dot').className = 'tdot'+(tsOn?' on':'');
-  document.getElementById('ts-pill').className = 'toggle-pill'+(tsOn?' on':'');
-}
+function selModel(i){ mi=i; document.querySelectorAll('#model-menu .dd-item').forEach((d,j)=>d.className='dd-item'+(j===i?' sel':'')); document.getElementById('mval').textContent=modelData[i].name; closeAll(); }
+function selLang(val){ lang=val; document.querySelectorAll('#lang-menu .dd-item').forEach(d=>{ const m=d.textContent.trim().startsWith(val)||(val==='Auto'&&d.textContent.includes('Auto')); d.className='dd-item'+(m?' sel':''); }); document.getElementById('lval').textContent=val==='Auto detect'?'Auto':val; closeAll(); }
+function selTr(val){ trVal=val; document.querySelectorAll('#tr-menu .dd-item').forEach(d=>{ const m=(val==='Off'&&d.textContent.trim()==='Off')||(val!=='Off'&&d.textContent.includes('English')); d.className='dd-item'+(m?' sel':''); }); document.getElementById('trval').textContent=val; closeAll(); }
+function toggleTs(){ tsOn=!tsOn; document.getElementById('ts-dot').className='tdot'+(tsOn?' on':''); document.getElementById('ts-pill').className='toggle-pill'+(tsOn?' on':''); }
 
-// ── File handling ──
-document.getElementById('file-input').addEventListener('change', e=>{
-  const f = e.target.files[0]; if(!f) return;
-  setFile(f);
-});
-const dz = document.getElementById('dropzone');
-dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.classList.add('active'); });
-dz.addEventListener('dragleave', ()=>dz.classList.remove('active'));
-dz.addEventListener('drop', e=>{
-  e.preventDefault();
-  const f = e.dataTransfer.files[0]; if(!f) return;
-  setFile(f);
-});
+document.getElementById('file-input').addEventListener('change', e=>{ const f=e.target.files[0]; if(f) setFile(f); });
+const dz=document.getElementById('dropzone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('active');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('active'));
+dz.addEventListener('drop',e=>{ e.preventDefault(); const f=e.dataTransfer.files[0]; if(f) setFile(f); });
+
 function setFile(f){
-  selFile = f;
-  document.getElementById('dz-main').style.display = 'none';
-  document.getElementById('dz-hint').style.display = 'none';
-  document.getElementById('dz-file').style.display = 'flex';
-  document.getElementById('dz-fname').textContent = f.name;
-  document.getElementById('dropzone').className = 'dropzone active';
-  document.getElementById('trans-btn').className = 'trans-btn show';
+  selFile=f;
+  document.getElementById('dz-main').style.display='none';
+  document.getElementById('dz-hint').style.display='none';
+  document.getElementById('dz-file').style.display='flex';
+  document.getElementById('dz-fname').textContent=f.name;
+  document.getElementById('dropzone').className='dropzone active';
+  document.getElementById('trans-btn').className='trans-btn show';
 }
 
-// ── Navigation ──
 function goBack(){
-  document.getElementById('result-state').className = '';
-  document.getElementById('upload-state').className = '';
-  document.getElementById('dz-main').style.display = '';
-  document.getElementById('dz-hint').style.display = '';
-  document.getElementById('dz-file').style.display = 'none';
-  document.getElementById('dropzone').className = 'dropzone';
-  document.getElementById('trans-btn').className = 'trans-btn';
-  document.getElementById('t-text').textContent = '';
-  document.getElementById('processing').className = 'loading-overlay';
+  document.getElementById('result-state').className='';
+  document.getElementById('upload-state').className='';
+  document.getElementById('dz-main').style.display='';
+  document.getElementById('dz-hint').style.display='';
+  document.getElementById('dz-file').style.display='none';
+  document.getElementById('dropzone').className='dropzone';
+  document.getElementById('trans-btn').className='trans-btn';
+  document.getElementById('t-text').textContent='';
+  document.getElementById('processing').className='loading-overlay';
+  document.getElementById('t-status').style.color='';
+  document.getElementById('pulse-dot').style.display='';
+  document.getElementById('pulse-dot').style.background='';
+  document.getElementById('pulse-dot').style.animation='';
   clearInterval(clockTimer);
-  elapsed = 0;
-  selFile = null;
+  elapsed=0;
+  selFile=null;
 }
+
 function copyText(){
   navigator.clipboard.writeText(document.getElementById('t-text').textContent).catch(()=>{});
-  const btn = event.target;
-  btn.textContent = 'Copied!';
-  setTimeout(()=>btn.textContent='Copy', 1600);
+  const btn=event.target; btn.textContent='Copied!';
+  setTimeout(()=>btn.textContent='Copy text',1600);
 }
+
 function downloadTxt(){
-  const txt = document.getElementById('t-text').textContent;
-  if(!txt) return;
-  const a = document.createElement('a');
-  a.href = 'data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
-  a.download = 'transcript.txt';
-  a.click();
+  const txt=document.getElementById('t-text').textContent; if(!txt) return;
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
+  a.download='transcript.txt'; a.click();
 }
 
-// ── Loading bar ──
-function fmtTime(s){ return s<60 ? s+'s' : Math.floor(s/60)+'m '+(s%60)+'s'; }
-function setStep(i){
-  for(let j=0;j<4;j++){
-    const el = document.getElementById('lstep'+j);
-    el.className = 'load-step'+(j<i?' done':j===i?' active':'');
-  }
-}
-function startClock(md){
-  elapsed = 0;
-  const eta = modelETA[md.name]||30;
+function fmtTime(s){ return s<60?s+'s':Math.floor(s/60)+'m '+(s%60)+'s'; }
+function setStep(i){ for(let j=0;j<4;j++){ const el=document.getElementById('lstep'+j); el.className='load-step'+(j<i?' done':j===i?' active':''); } }
+
+function startClock(fileSizeMB, md){
+  elapsed=0;
+  // FIX 3: Calculate ETA from file size + model
+  const eta=calcETA(fileSizeMB, md.name);
+  const sizeFmt=(fileSizeMB).toFixed(1)+'MB';
   clearInterval(clockTimer);
-  clockTimer = setInterval(()=>{
+  clockTimer=setInterval(()=>{
     elapsed++;
-    document.getElementById('load-time').textContent = fmtTime(elapsed);
-    const pct = Math.min(90, Math.round((elapsed/eta)*90));
-    const bar = document.getElementById('load-bar');
-    bar.className = 'load-bar';
-    bar.style.width = pct+'%';
-    document.getElementById('load-estimate').textContent =
-      elapsed < eta ? '~'+fmtTime(Math.max(0,eta-elapsed))+' remaining' : 'Taking longer than usual...';
-    if(elapsed < eta*0.15) setStep(1);
+    document.getElementById('load-time').textContent=fmtTime(elapsed);
+    const pct=Math.min(90,Math.round((elapsed/eta)*90));
+    const bar=document.getElementById('load-bar');
+    bar.className='load-bar';
+    bar.style.width=pct+'%';
+    const remaining=Math.max(0,eta-elapsed);
+    if(elapsed<eta){
+      document.getElementById('load-estimate').textContent='~'+fmtTime(remaining)+' remaining';
+    } else {
+      document.getElementById('load-estimate').textContent='Still working — '+sizeFmt+' file';
+    }
+    if(elapsed<eta*0.15) setStep(1);
     else setStep(2);
-  }, 1000);
+  },1000);
 }
 
-// ── Result helpers ──
 function showResult(md){
-  document.getElementById('processing').className = 'loading-overlay';
-  document.getElementById('file-chip').textContent = selFile ? selFile.name : '';
-  document.getElementById('upload-state').className = 'hidden';
-  document.getElementById('result-state').className = 'show';
-  document.getElementById('ap-model').textContent = md.name;
-  document.getElementById('ap-spd').textContent = md.spd;
-  document.getElementById('ap-desc').textContent = md.desc;
-  const bar = document.getElementById('ap-bar'); bar.innerHTML = '';
+  document.getElementById('processing').className='loading-overlay';
+  document.getElementById('file-chip').textContent=selFile?selFile.name:'';
+  document.getElementById('upload-state').className='hidden';
+  document.getElementById('result-state').className='show';
+  document.getElementById('ap-model').textContent=md.name;
+  document.getElementById('ap-spd').textContent=md.spd;
+  document.getElementById('ap-desc').textContent=md.desc;
+  const bar=document.getElementById('ap-bar'); bar.innerHTML='';
   for(let i=0;i<4;i++){const s=document.createElement('div');s.className='mc-seg'+(i<md.segs?' on':'');bar.appendChild(s);}
-  document.getElementById('ap-lang').textContent = lang;
-  document.getElementById('ap-tr').textContent = trVal;
-  document.getElementById('ap-ts').textContent = tsOn ? 'On' : 'Off';
+  document.getElementById('ap-lang').textContent=lang;
+  document.getElementById('ap-tr').textContent=trVal;
+  document.getElementById('ap-ts').textContent=tsOn?'On':'Off';
 }
+
 function showError(msg){
   clearInterval(clockTimer);
-  document.getElementById('processing').className = 'loading-overlay';
-  document.getElementById('file-chip').textContent = selFile ? selFile.name : '';
-  document.getElementById('upload-state').className = 'hidden';
-  document.getElementById('result-state').className = 'show';
-  document.getElementById('t-text').innerHTML = `<div class="error-box"><strong>Error:</strong> ${msg}<br><br><small>Make sure your Hugging Face space is Running, then try again.</small></div>`;
-  document.getElementById('status-txt').textContent = 'Failed';
-  document.getElementById('t-status').style.color = '#f08080';
-  document.getElementById('pulse-dot').style.display = 'none';
+  document.getElementById('processing').className='loading-overlay';
+  document.getElementById('file-chip').textContent=selFile?selFile.name:'';
+  document.getElementById('upload-state').className='hidden';
+  document.getElementById('result-state').className='show';
+  document.getElementById('t-text').innerHTML=`<div class="error-box"><strong>Error:</strong> ${msg}<br><br><small>Make sure your Hugging Face space is Running, then try again.</small></div>`;
+  document.getElementById('status-txt').textContent='Failed';
+  document.getElementById('t-status').style.color='#f08080';
+  document.getElementById('pulse-dot').style.display='none';
 }
+
 function finishTranscript(transcript, md){
   clearInterval(clockTimer);
   setStep(3);
-  const bar = document.getElementById('load-bar');
-  bar.style.width = '100%';
+  document.getElementById('load-bar').style.width='100%';
   setTimeout(()=>{
     showResult(md);
-    document.getElementById('ap-words').textContent = transcript.trim().split(/\s+/).length;
-    document.getElementById('pulse-dot').style.animation = 'none';
-    document.getElementById('pulse-dot').style.background = '#22c55e';
-    document.getElementById('status-txt').textContent = 'Done';
-    document.getElementById('t-status').style.color = '#22c55e';
-    document.getElementById('t-text').textContent = transcript;
-    document.getElementById('trans-btn').disabled = false;
-  }, 400);
+    document.getElementById('ap-words').textContent=transcript.trim().split(/\s+/).length;
+    document.getElementById('pulse-dot').style.animation='none';
+    document.getElementById('pulse-dot').style.background='#22c55e';
+    document.getElementById('status-txt').textContent='Done';
+    document.getElementById('t-status').style.color='#22c55e';
+    document.getElementById('t-text').textContent=transcript;
+    document.getElementById('trans-btn').disabled=false;
+  },400);
 }
 
-// ── Main transcribe function ──
 async function doTranscribe(){
   if(!selFile) return;
-  const btn = document.getElementById('trans-btn');
-  btn.disabled = true;
-  document.getElementById('processing').className = 'loading-overlay show';
+  const btn=document.getElementById('trans-btn');
+  btn.disabled=true;
+  document.getElementById('processing').className='loading-overlay show';
+  const md=modelData[mi];
+  // FIX 3: Get file size in MB
+  const fileSizeMB=selFile.size/1024/1024;
 
-  const md = modelData[mi];
-
-  try {
-    document.getElementById('load-title').textContent = 'Connecting to AI...';
+  try{
+    document.getElementById('load-title').textContent='Connecting to AI...';
     setStep(0);
 
-    // Load client if not already loaded
     if(!GradioClient){
-      const mod = await import('https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js');
-      GradioClient = mod.Client;
+      const mod=await import('https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js');
+      GradioClient=mod.Client;
     }
 
-    const client = await GradioClient.connect(HF_SPACE, {
-      status_callback: (status) => {
-        if(status.stage === 'SLEEPING' || status.stage === 'BUILDING'){
-          document.getElementById('load-title').textContent = 'Waking up AI — please wait ~30s...';
-        } else if(status.stage === 'RUNNING'){
-          document.getElementById('load-title').textContent = 'AI is ready!';
+    const client=await GradioClient.connect(HF_SPACE,{
+      status_callback:(status)=>{
+        if(status.stage==='SLEEPING'||status.stage==='BUILDING'){
+          document.getElementById('load-title').textContent='Waking up AI — please wait ~30s...';
+        } else if(status.stage==='RUNNING'){
+          document.getElementById('load-title').textContent='AI is ready!';
         }
       }
     });
 
-    document.getElementById('load-title').textContent = 'Uploading & transcribing — '+md.name+' model';
+    document.getElementById('load-title').textContent=`Transcribing ${(fileSizeMB).toFixed(1)}MB — ${md.name} model`;
     setStep(1);
-
-    // Start clock timer BEFORE the long predict call
-    startClock(md);
+    // FIX 3: Start dynamic clock with file size
+    startClock(fileSizeMB, md);
     setStep(2);
 
-    // Call Gradio API — inputs must match app.py order exactly:
-    // [file, model_choice, language, timestamps, translate]
-    const result = await client.predict('/run', [
+    const result=await client.predict('/run',[
       selFile,
       MODEL_STRINGS[md.name],
-      lang === 'Auto' ? 'Auto Detect' : lang,
+      lang==='Auto'?'Auto Detect':lang,
       tsOn,
-      trVal === 'Off' ? 'Off' : 'Translate to English'
+      trVal==='Off'?'Off':'Translate to English'
     ]);
 
-    const transcript = result?.data?.[0];
-    if(transcript && transcript.trim().length > 0){
-      finishTranscript(transcript, md);
-    } else if(transcript !== undefined){
+    const transcript=result?.data?.[0];
+    if(transcript&&transcript.trim().length>0){
+      finishTranscript(transcript,md);
+    } else if(transcript!==undefined){
       throw new Error('Transcript came back empty. The audio may have no speech, or try a different model.');
     } else {
       throw new Error('No response from Hugging Face. Make sure your space is Running and try again.');
     }
 
-  } catch(err){
-    showError(err.message || String(err));
-    btn.disabled = false;
+  }catch(err){
+    showError(err.message||String(err));
+    btn.disabled=false;
   }
 }
 
-// Expose functions needed by inline onclick handlers
-window.toggleMenu = toggleMenu;
-window.selModel   = selModel;
-window.selLang    = selLang;
-window.selTr      = selTr;
-window.toggleTs   = toggleTs;
-window.goBack     = goBack;
-window.copyText   = copyText;
-window.downloadTxt= downloadTxt;
-window.doTranscribe = doTranscribe;
+window.toggleMenu=toggleMenu;
+window.selModel=selModel;
+window.selLang=selLang;
+window.selTr=selTr;
+window.toggleTs=toggleTs;
+window.goBack=goBack;
+window.copyText=copyText;
+window.downloadTxt=downloadTxt;
+window.doTranscribe=doTranscribe;
 </script>
 </body>
 </html>
