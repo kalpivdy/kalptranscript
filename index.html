@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalp Transcript — Kalpi Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#3066BE;--blue-light:#58B8FF;--bg:#0a0a0a;--surface:#0f0f0f;--border:#1a1a1a;--text:#ededed;--muted:#c8c8c8;--dim:#444;--accent-bg:#060d18;--accent-border:#1a2d4a}
+html,body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;min-height:100vh}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:56px;border-bottom:1px solid var(--border)}
+.logo{font-size:14px;font-weight:600;letter-spacing:-0.02em;display:flex;align-items:baseline;gap:1px}
+.logo em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--blue-light);font-size:15px}
+.nav-meta{font-size:10px;color:#555;letter-spacing:0.14em;text-transform:uppercase}
+
+/* UPLOAD STATE */
+#upload-state{display:flex;flex-direction:column;align-items:center;padding:88px 40px 72px;transition:all 0.3s}
+#upload-state.hidden{display:none}
+.eyebrow{font-size:10px;color:var(--blue);letter-spacing:0.22em;text-transform:uppercase;margin-bottom:20px;border:1px solid var(--accent-border);border-radius:100px;padding:5px 16px;background:var(--accent-bg)}
+.hero-title{font-size:48px;font-weight:600;letter-spacing:-0.04em;color:var(--text);text-align:center;line-height:1.05;margin-bottom:10px}
+.hero-title em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--blue-light)}
+.hero-sub{font-size:13px;color:var(--dim);text-align:center;margin-bottom:48px;font-weight:300}
+
+/* DROPZONE */
+.dropzone{width:100%;max-width:540px;background:var(--surface);border:1px dashed #1a2d3a;border-radius:14px;padding:44px 32px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
+.dropzone:hover,.dropzone.active{border-color:var(--blue);background:#07101c}
+.dropzone:hover .dz-icon,.dropzone.active .dz-icon{stroke:var(--blue)}
+.dz-icon{width:32px;height:32px;stroke:#252525;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin:0 auto 14px;display:block;transition:stroke 0.2s}
+.dz-main{font-size:13px;color:#888;margin-bottom:5px}
+.dz-main span{color:var(--blue-light)}
+.dz-hint{font-size:11px;color:#555;letter-spacing:0.05em}
+.dz-file{display:none;align-items:center;gap:10px;justify-content:center}
+.dz-file-icon{width:30px;height:30px;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dz-file-icon svg{width:14px;height:14px;stroke:var(--blue-light);fill:none;stroke-width:2}
+.dz-filename{font-size:13px;color:var(--text)}
+input[type=file]{display:none}
+
+/* CONTROLS ROW */
+.controls{display:flex;align-items:center;gap:8px;margin-top:20px;flex-wrap:nowrap;max-width:540px;width:100%}
+.dd-wrap{position:relative}
+.ctrl-pill{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:#aaa;display:flex;align-items:center;gap:6px;cursor:pointer;transition:all 0.15s;white-space:nowrap;user-select:none;font-family:'Geist',sans-serif}
+.ctrl-pill:hover,.ctrl-pill.open{border-color:#2a2a2a;color:var(--text)}
+.ctrl-pill b{color:var(--text);font-weight:500}
+.ctrl-pill svg{width:9px;height:5px;stroke:#888;fill:none;stroke-width:2;flex-shrink:0}
+.toggle-pill{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:#aaa;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px;user-select:none;white-space:nowrap;font-family:'Geist',sans-serif}
+.toggle-pill:hover{border-color:#2a2a2a;color:var(--text)}
+.toggle-pill.on{border-color:var(--accent-border);color:var(--blue-light);background:var(--accent-bg)}
+.tdot{width:7px;height:7px;border-radius:50%;border:1.5px solid #2a2a2a;transition:all 0.15s;flex-shrink:0}
+.tdot.on{background:var(--blue);border-color:var(--blue)}
+
+/* DROPDOWN MENU */
+.dd-menu{position:absolute;top:calc(100% + 7px);left:0;background:#111;border:1px solid #222;border-radius:10px;overflow:hidden;z-index:99;min-width:200px;display:none;box-shadow:0 12px 32px rgba(0,0,0,0.7)}
+.dd-menu.open{display:block}
+.dd-item{padding:10px 14px;font-size:12px;color:#666;cursor:pointer;transition:all 0.12s;display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:'Geist',sans-serif}
+.dd-item:hover{background:#1a1a1a;color:var(--text)}
+.dd-item.sel{color:var(--text);background:#141414}
+.dd-right{display:flex;align-items:center;gap:8px}
+.spd-bar{display:flex;gap:2px}
+.spd-seg{width:5px;height:5px;border-radius:1px;background:#1a1a1a}
+.spd-seg.on{background:var(--blue)}
+.spd-lbl{font-size:10px;color:var(--blue);min-width:36px;text-align:right}
+.dd-chk{width:12px;height:12px;stroke:var(--blue-light);fill:none;stroke-width:2.5;flex-shrink:0;display:none}
+.dd-item.sel .dd-chk{display:block}
+
+/* TRANSCRIBE BUTTON */
+.trans-btn{background:var(--text);color:#000;border:none;border-radius:8px;padding:8px 20px;font-family:'Geist',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.18s;display:none;white-space:nowrap}
+.trans-btn:hover{background:var(--blue-light)}
+.trans-btn.show{display:block}
+.trans-btn:disabled{opacity:0.5;cursor:not-allowed}
+
+/* Loading overlay */
+.loading-overlay{display:none;flex-direction:column;align-items:center;gap:20px;padding:48px 40px;width:100%;max-width:540px}
+.loading-overlay.show{display:flex}
+.load-title{font-size:13px;color:#ededed;font-weight:500;text-align:center}
+.load-sub{font-size:12px;color:#444;text-align:center;line-height:1.6;max-width:380px}
+.load-bar-wrap{width:100%;height:3px;background:#1a1a1a;border-radius:100px;overflow:hidden}
+.load-bar{height:100%;background:var(--blue);border-radius:100px;width:0%;transition:width 0.8s ease}
+.load-bar.indeterminate{animation:indeterminate 1.8s ease-in-out infinite}
+@keyframes indeterminate{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+.load-meta{display:flex;align-items:center;justify-content:space-between;width:100%}
+.load-time{font-size:11px;color:#555;font-family:monospace}
+.load-estimate{font-size:11px;color:#2a4a6a;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:6px;padding:3px 10px}
+.load-steps{display:flex;flex-direction:column;gap:8px;width:100%}
+.load-step{display:flex;align-items:center;gap:10px;font-size:12px;color:#2a2a2a;transition:color 0.3s}
+.load-step.active{color:#ededed}
+.load-step.done{color:#22c55e}
+.load-step-dot{width:6px;height:6px;border-radius:50%;background:#1a1a1a;flex-shrink:0;transition:all 0.3s}
+.load-step.active .load-step-dot{background:var(--blue);animation:pulse 1s ease-in-out infinite}
+.load-step.done .load-step-dot{background:#22c55e;animation:none}
+
+/* RESULT STATE */
+#result-state{display:none;flex-direction:column}
+#result-state.show{display:flex}
+.result-nav{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;border-bottom:1px solid var(--border)}
+.result-nav-l{display:flex;align-items:center;gap:12px}
+.back-btn{font-size:12px;color:var(--dim);cursor:pointer;display:flex;align-items:center;gap:5px;transition:color 0.15s;border:none;background:none;font-family:'Geist',sans-serif;padding:0}
+.back-btn:hover{color:var(--text)}
+.back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.file-chip{font-size:11px;color:var(--blue);background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:100px;padding:4px 12px}
+.result-actions{display:flex;gap:8px}
+.act-btn{font-size:11px;color:var(--dim);border:1px solid var(--border);background:transparent;border-radius:8px;padding:7px 16px;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s}
+.act-btn:hover{border-color:#333;color:var(--text)}
+.act-btn.primary{background:var(--text);color:#000;border-color:var(--text)}
+.act-btn.primary:hover{background:var(--blue-light);border-color:var(--blue-light)}
+
+/* RESULT BODY */
+.result-body{display:grid;grid-template-columns:1fr 320px;min-height:600px}
+.transcript-main{padding:40px 48px;border-right:1px solid var(--border)}
+.t-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.t-title{font-size:11px;font-weight:500;color:#333;letter-spacing:0.14em;text-transform:uppercase}
+.t-status{font-size:11px;color:var(--blue);display:flex;align-items:center;gap:6px}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
+#t-text{font-size:14px;color:var(--muted);line-height:1.9;font-weight:300;min-height:400px;white-space:pre-wrap}
+.cursor{display:inline-block;width:2px;height:14px;background:var(--blue);margin-left:1px;vertical-align:middle;animation:blink 0.9s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ACCENT PANEL */
+.accent-panel{background:var(--accent-bg);border-left:1px solid var(--accent-border);padding:32px 28px;display:flex;flex-direction:column;gap:22px}
+.ap-lbl{font-size:10px;font-weight:500;color:#1e3a5f;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px}
+.ap-stat{font-size:30px;font-weight:600;color:var(--blue);letter-spacing:-0.03em}
+.ap-sub{font-size:11px;color:#1e3a5f;margin-top:4px}
+.ap-div{height:1px;background:#0d1d30}
+.model-card{background:#0a1628;border:1px solid var(--accent-border);border-radius:10px;padding:16px}
+.mc-name{font-size:13px;font-weight:600;color:var(--blue-light);margin-bottom:8px}
+.mc-spd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.mc-bar{display:flex;gap:3px}
+.mc-seg{width:20px;height:4px;border-radius:2px;background:#0d1d30}
+.mc-seg.on{background:var(--blue)}
+.mc-spd-lbl{font-size:10px;color:var(--blue)}
+.mc-desc{font-size:11px;color:#1e3a5f;line-height:1.6}
+.sl-list{display:flex;flex-direction:column;gap:9px}
+.sl-row{display:flex;align-items:center;justify-content:space-between;font-size:11px}
+.sl-k{color:#1e3a5f}
+.sl-v{color:var(--blue);font-weight:500}
+
+/* PROCESSING OVERLAY */
+.processing{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--blue);margin-top:12px}
+.spin{width:14px;height:14px;border:2px solid #1a2d4a;border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ERROR */
+.error-box{background:#1a0a0a;border:1px solid #3a1010;border-radius:10px;padding:16px;font-size:13px;color:#f08080;line-height:1.6}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Kalp&nbsp;<em>Transcript</em></div>
+  <span class="nav-meta">by Kalpi Edition</span>
+</nav>
+
+<!-- UPLOAD STATE -->
+<div id="upload-state">
+  <div class="eyebrow">AI-powered speech to text</div>
+  <h1 class="hero-title">Turn any video into<br><em>clean text.</em></h1>
+  <p class="hero-sub">Drop a file below and get a transcript in seconds.</p>
+
+  <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+    <svg class="dz-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <div class="dz-main" id="dz-main">Drop your file here or <span>click to browse</span></div>
+    <div class="dz-hint" id="dz-hint">MP4 · MOV · MP3 · WAV · M4A · WebM</div>
+    <div class="dz-file" id="dz-file">
+      <div class="dz-file-icon"><svg viewBox="0 0 16 16"><path d="M3 2h7l3 3v9H3z"/><path d="M10 2v3h3"/></svg></div>
+      <span id="dz-fname"></span>
+    </div>
+    <input type="file" id="file-input" accept="video/*,audio/*">
+  </div>
+
+  <div class="controls" style="justify-content:center">
+    <!-- Model -->
+    <div class="dd-wrap">
+      <div class="ctrl-pill" id="model-pill" onclick="toggleMenu('model-menu','model-pill')">
+        <span>Model</span><b id="mval">tiny</b>
+        <svg viewBox="0 0 9 5"><path d="M1 1l3.5 3L8 1"/></svg>
+      </div>
+      <div class="dd-menu" id="model-menu">
+        <div class="dd-item sel" onclick="selModel(0,this)">tiny<div class="dd-right"><div class="spd-bar"><div class="spd-seg on"></div><div class="spd-seg"></div><div class="spd-seg"></div><div class="spd-seg"></div></div><span class="spd-lbl">Fastest</span><svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div></div>
+        <div class="dd-item" onclick="selModel(1,this)">base<div class="dd-right"><div class="spd-bar"><div class="spd-seg on"></div><div class="spd-seg on"></div><div class="spd-seg"></div><div class="spd-seg"></div></div><span class="spd-lbl">Fast</span><svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div></div>
+        <div class="dd-item" onclick="selModel(2,this)">small<div class="dd-right"><div class="spd-bar"><div class="spd-seg on"></div><div class="spd-seg on"></div><div class="spd-seg on"></div><div class="spd-seg"></div></div><span class="spd-lbl">Balanced</span><svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div></div>
+        <div class="dd-item" onclick="selModel(3,this)">medium<div class="dd-right"><div class="spd-bar"><div class="spd-seg on"></div><div class="spd-seg on"></div><div class="spd-seg on"></div><div class="spd-seg on"></div></div><span class="spd-lbl">Best</span><svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div></div>
+      </div>
+    </div>
+
+    <!-- Language -->
+    <div class="dd-wrap">
+      <div class="ctrl-pill" id="lang-pill" onclick="toggleMenu('lang-menu','lang-pill')">
+        <span>Lang</span><b id="lval">Auto</b>
+        <svg viewBox="0 0 9 5"><path d="M1 1l3.5 3L8 1"/></svg>
+      </div>
+      <div class="dd-menu" id="lang-menu">
+        <div class="dd-item sel" onclick="selLang('Auto',this)">Auto detect<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+        <div class="dd-item" onclick="selLang('English',this)">English<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+        <div class="dd-item" onclick="selLang('Hindi',this)">Hindi<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+        <div class="dd-item" onclick="selLang('Spanish',this)">Spanish<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+        <div class="dd-item" onclick="selLang('French',this)">French<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+        <div class="dd-item" onclick="selLang('German',this)">German<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+        <div class="dd-item" onclick="selLang('Japanese',this)">Japanese<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+        <div class="dd-item" onclick="selLang('Chinese',this)">Chinese<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+      </div>
+    </div>
+
+    <!-- Timestamps -->
+    <div class="toggle-pill" id="ts-pill" onclick="toggleTs()">
+      <div class="tdot" id="ts-dot"></div>Timestamps
+    </div>
+
+    <!-- Translate -->
+    <div class="dd-wrap">
+      <div class="ctrl-pill" id="tr-pill" onclick="toggleMenu('tr-menu','tr-pill')">
+        <span>Translate</span><b id="trval">Off</b>
+        <svg viewBox="0 0 9 5"><path d="M1 1l3.5 3L8 1"/></svg>
+      </div>
+      <div class="dd-menu" id="tr-menu">
+        <div class="dd-item sel" onclick="selTr('Off',this)">Off<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+        <div class="dd-item" onclick="selTr('→ English',this)">Translate to English<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+      </div>
+    </div>
+
+    <button class="trans-btn" id="trans-btn" onclick="doTranscribe()">Transcribe →</button>
+  </div>
+  <div class="loading-overlay" id="processing">
+    <div class="load-title" id="load-title">Uploading your file...</div>
+    <div class="load-bar-wrap"><div class="load-bar indeterminate" id="load-bar"></div></div>
+    <div class="load-meta">
+      <span class="load-time" id="load-time">0s</span>
+      <span class="load-estimate" id="load-estimate">Estimating...</span>
+    </div>
+    <div class="load-steps">
+      <div class="load-step active" id="lstep0"><div class="load-step-dot"></div>Uploading file</div>
+      <div class="load-step" id="lstep1"><div class="load-step-dot"></div>Loading AI model</div>
+      <div class="load-step" id="lstep2"><div class="load-step-dot"></div>Transcribing audio</div>
+      <div class="load-step" id="lstep3"><div class="load-step-dot"></div>Finalising transcript</div>
+    </div>
+    <div class="load-sub" id="load-sub">Keep this tab open — closing it will cancel the transcription.</div>
+  </div>
+</div>
+
+<!-- RESULT STATE -->
+<div id="result-state">
+  <div class="result-nav">
+    <div class="result-nav-l">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 14 14"><path d="M8 2L3 7l5 5"/><line x1="3" y1="7" x2="13" y2="7"/></svg>New file
+      </button>
+      <div class="file-chip" id="file-chip"></div>
+    </div>
+    <div class="result-actions">
+      <button class="act-btn" onclick="copyText()">Copy</button>
+      <button class="act-btn primary" onclick="downloadTxt()">Download .txt</button>
+    </div>
+  </div>
+  <div class="result-body">
+    <div class="transcript-main">
+      <div class="t-head">
+        <span class="t-title">Transcript</span>
+        <span class="t-status" id="t-status">
+          <span class="pulse" id="pulse-dot"></span>
+          <span id="status-txt">Transcribing</span>
+        </span>
+      </div>
+      <div id="t-text"></div>
+    </div>
+    <div class="accent-panel">
+      <div>
+        <div class="ap-lbl">Words</div>
+        <div class="ap-stat" id="ap-words">—</div>
+        <div class="ap-sub">estimated count</div>
+      </div>
+      <div class="ap-div"></div>
+      <div>
+        <div class="ap-lbl">Model</div>
+        <div class="model-card">
+          <div class="mc-name" id="ap-model">tiny</div>
+          <div class="mc-spd">
+            <div class="mc-bar" id="ap-bar"></div>
+            <span class="mc-spd-lbl" id="ap-spd">Fastest</span>
+          </div>
+          <div class="mc-desc" id="ap-desc">Best for quick clips.</div>
+        </div>
+      </div>
+      <div class="ap-div"></div>
+      <div>
+        <div class="ap-lbl">Settings</div>
+        <div class="sl-list">
+          <div class="sl-row"><span class="sl-k">Language</span><span class="sl-v" id="ap-lang">Auto</span></div>
+          <div class="sl-row"><span class="sl-k">Translate</span><span class="sl-v" id="ap-tr">Off</span></div>
+          <div class="sl-row"><span class="sl-k">Timestamps</span><span class="sl-v" id="ap-ts">Off</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Config ──
+// REPLACE THIS with your Railway backend URL after deploying
+const BACKEND_URL = 'https://YOUR-RAILWAY-APP.up.railway.app';
+
+const modelData=[
+  {name:'tiny',segs:1,spd:'Fastest',desc:'Best for quick clips. Lower accuracy on accents.'},
+  {name:'base',segs:2,spd:'Fast',desc:'Balanced speed and accuracy for most videos.'},
+  {name:'small',segs:3,spd:'Balanced',desc:'High accuracy. Recommended for most use cases.'},
+  {name:'medium',segs:4,spd:'Best',desc:'Best accuracy. Slower — ideal for complex audio.'}
+];
+let mi=0,lang='Auto',tsOn=false,trVal='Off',selFile=null;
+
+// Dropdown helpers
+function toggleMenu(mid,pid){
+  const isOpen=document.getElementById(mid).classList.contains('open');
+  closeAll();
+  if(!isOpen){document.getElementById(mid).classList.add('open');document.getElementById(pid).classList.add('open');}
+}
+function closeAll(){
+  document.querySelectorAll('.dd-menu').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.ctrl-pill').forEach(p=>p.classList.remove('open'));
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.dd-wrap'))closeAll();});
+
+function selModel(i,el){
+  mi=i;
+  document.querySelectorAll('#model-menu .dd-item').forEach((d,j)=>d.className='dd-item'+(j===i?' sel':''));
+  document.getElementById('mval').textContent=modelData[i].name;
+  closeAll();
+}
+function selLang(val,el){
+  lang=val;
+  document.querySelectorAll('#lang-menu .dd-item').forEach(d=>{
+    const m=d.textContent.trim().startsWith(val)||(val==='Auto'&&d.textContent.includes('Auto'));
+    d.className='dd-item'+(m?' sel':'');
+  });
+  document.getElementById('lval').textContent=val==='Auto detect'?'Auto':val;
+  closeAll();
+}
+function selTr(val,el){
+  trVal=val;
+  document.querySelectorAll('#tr-menu .dd-item').forEach(d=>{
+    const m=(val==='Off'&&d.textContent.trim()==='Off')||(val!=='Off'&&d.textContent.includes('English'));
+    d.className='dd-item'+(m?' sel':'');
+  });
+  document.getElementById('trval').textContent=val;
+  closeAll();
+}
+function toggleTs(){
+  tsOn=!tsOn;
+  document.getElementById('ts-dot').className='tdot'+(tsOn?' on':'');
+  document.getElementById('ts-pill').className='toggle-pill'+(tsOn?' on':'');
+}
+
+// File pick
+document.getElementById('file-input').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  selFile=f;
+  document.getElementById('dz-main').style.display='none';
+  document.getElementById('dz-hint').style.display='none';
+  const df=document.getElementById('dz-file');df.style.display='flex';
+  document.getElementById('dz-fname').textContent=f.name;
+  document.getElementById('dropzone').className='dropzone active';
+  document.getElementById('trans-btn').className='trans-btn show';
+});
+
+// Drag and drop
+const dz=document.getElementById('dropzone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('active');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('active'));
+dz.addEventListener('drop',e=>{
+  e.preventDefault();
+  const f=e.dataTransfer.files[0];if(!f)return;
+  selFile=f;
+  document.getElementById('dz-main').style.display='none';
+  document.getElementById('dz-hint').style.display='none';
+  document.getElementById('dz-file').style.display='flex';
+  document.getElementById('dz-fname').textContent=f.name;
+  dz.className='dropzone active';
+  document.getElementById('trans-btn').className='trans-btn show';
+});
+
+function goBack(){
+  document.getElementById('result-state').className='';
+  document.getElementById('upload-state').className='';
+  document.getElementById('dz-main').style.display='';
+  document.getElementById('dz-hint').style.display='';
+  document.getElementById('dz-file').style.display='none';
+  document.getElementById('dropzone').className='dropzone';
+  document.getElementById('trans-btn').className='trans-btn';
+  document.getElementById('t-text').textContent='';
+  document.getElementById('processing').className='loading-overlay';
+  if(pollTimer)clearInterval(pollTimer);
+  if(clockTimer)clearInterval(clockTimer);
+  elapsed=0;
+  selFile=null;
+}
+
+function copyText(){
+  navigator.clipboard.writeText(document.getElementById('t-text').textContent).catch(()=>{});
+  const btn=event.target;btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1600);
+}
+
+function downloadTxt(){
+  const txt=document.getElementById('t-text').textContent;
+  if(!txt)return;
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
+  a.download='transcript.txt';a.click();
+}
+
+// Estimated seconds per model (rough avg for 1 min of audio)
+const modelETA={tiny:15,base:25,small:50,medium:120};
+
+function setStep(i){
+  for(let j=0;j<4;j++){
+    const el=document.getElementById('lstep'+j);
+    if(j<i) el.className='load-step done';
+    else if(j===i) el.className='load-step active';
+    else el.className='load-step';
+  }
+}
+
+function fmtTime(s){
+  if(s<60)return s+'s';
+  return Math.floor(s/60)+'m '+( s%60)+'s';
+}
+
+function showResult(md){
+  document.getElementById('processing').className='loading-overlay';
+  document.getElementById('file-chip').textContent=selFile.name;
+  document.getElementById('upload-state').className='hidden';
+  document.getElementById('result-state').className='show';
+  document.getElementById('ap-model').textContent=md.name;
+  document.getElementById('ap-spd').textContent=md.spd;
+  document.getElementById('ap-desc').textContent=md.desc;
+  const bar=document.getElementById('ap-bar');bar.innerHTML='';
+  for(let i=0;i<4;i++){const s=document.createElement('div');s.className='mc-seg'+(i<md.segs?' on':'');bar.appendChild(s);}
+  document.getElementById('ap-lang').textContent=lang;
+  document.getElementById('ap-tr').textContent=trVal;
+  document.getElementById('ap-ts').textContent=tsOn?'On':'Off';
+}
+
+function showError(msg){
+  document.getElementById('processing').className='loading-overlay';
+  document.getElementById('file-chip').textContent=selFile?selFile.name:'';
+  document.getElementById('upload-state').className='hidden';
+  document.getElementById('result-state').className='show';
+  document.getElementById('t-text').innerHTML=`<div class="error-box">Error: ${msg}</div>`;
+  document.getElementById('status-txt').textContent='Failed';
+  document.getElementById('t-status').style.color='#f08080';
+  document.getElementById('pulse-dot').style.display='none';
+}
+
+let pollTimer=null;
+let clockTimer=null;
+let elapsed=0;
+
+function startPolling(jobId, md){
+  elapsed=0;
+  const eta=modelETA[md.name]||30;
+
+  // update clock every second
+  clockTimer=setInterval(()=>{
+    elapsed++;
+    document.getElementById('load-time').textContent=fmtTime(elapsed);
+
+    // progress bar: fill to 90% over ETA, then hold
+    const pct=Math.min(90, Math.round((elapsed/eta)*90));
+    const bar=document.getElementById('load-bar');
+    bar.className='load-bar';
+    bar.style.width=pct+'%';
+
+    // update estimate
+    const remaining=Math.max(0, eta-elapsed);
+    if(elapsed<eta){
+      document.getElementById('load-estimate').textContent='~'+fmtTime(remaining)+' remaining';
+    } else {
+      document.getElementById('load-estimate').textContent='Taking longer than usual...';
+    }
+
+    // step progression based on elapsed vs ETA
+    if(elapsed<3) setStep(0);
+    else if(elapsed<eta*0.15) setStep(1);
+    else if(elapsed<eta*0.9) setStep(2);
+    else setStep(2); // stay on transcribing
+  },1000);
+
+  // poll server every 3s
+  pollTimer=setInterval(async()=>{
+    try{
+      const res=await fetch(`${BACKEND_URL}/status/${jobId}`);
+      if(!res.ok){clearInterval(pollTimer);clearInterval(clockTimer);showError('Could not check job status');return;}
+      const data=await res.json();
+      if(data.status==='done'){
+        clearInterval(pollTimer);
+        clearInterval(clockTimer);
+        setStep(3);
+        setTimeout(()=>{
+          showResult(md);
+          document.getElementById('ap-words').textContent=data.transcript.trim().split(/\s+/).length;
+          document.getElementById('pulse-dot').style.animation='none';
+          document.getElementById('pulse-dot').style.background='#22c55e';
+          document.getElementById('status-txt').textContent='Done';
+          document.getElementById('t-status').style.color='#22c55e';
+          document.getElementById('t-text').textContent=data.transcript;
+          document.getElementById('trans-btn').disabled=false;
+        },600);
+      }else if(data.status==='error'){
+        clearInterval(pollTimer);
+        clearInterval(clockTimer);
+        showError(data.error||'Transcription failed');
+        document.getElementById('trans-btn').disabled=false;
+      }
+    }catch(e){
+      // network blip — keep polling
+    }
+  },3000);
+}
+
+async function doTranscribe(){
+  if(!selFile)return;
+  const btn=document.getElementById('trans-btn');
+  btn.disabled=true;
+  document.getElementById('processing').className='loading-overlay show';
+
+  const md=modelData[mi];
+  const formData=new FormData();
+  formData.append('file',selFile);
+  formData.append('model',md.name);
+  formData.append('language',lang==='Auto'?'auto':lang.toLowerCase());
+  formData.append('task',trVal==='Off'?'transcribe':'translate');
+  formData.append('timestamps',tsOn?'true':'false');
+
+  try{
+    document.getElementById('load-title').textContent='Uploading your file...';
+    setStep(0);
+    const res=await fetch(`${BACKEND_URL}/transcribe`,{method:'POST',body:formData});
+    if(!res.ok){const e=await res.json();throw new Error(e.error||'Server error');}
+    const data=await res.json();
+    document.getElementById('load-title').textContent='Transcribing — '+md.name+' model';
+    setStep(1);
+    startPolling(data.job_id, md);
+  }catch(err){
+    showError(err.message);
+    btn.disabled=false;
+  }
+}
+</script>
+</body>
+</html>
