@@ -539,7 +539,7 @@ async function doTranscribe(){
       MODEL_STRINGS[md.name],
       lang === 'Auto' ? 'Auto Detect' : lang,
       tsOn,
-      trVal === 'Off' ? 'Transcribe' : 'Translate to English'
+      trVal === 'Off' ? 'Off' : 'Translate to English'
     ]);
 
     const transcript = result?.data?.[0];
