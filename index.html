@@ -163,12 +163,12 @@ input[type=file]{display:none}
   <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
     <svg class="dz-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     <div class="dz-main" id="dz-main">Drop your file here or <span>click to browse</span></div>
-    <div class="dz-hint" id="dz-hint">MP4 · MOV · MP3 · WAV · M4A · WebM</div>
+    <div class="dz-hint" id="dz-hint">MP4 · MOV · MKV · WebM · MP3 · WAV · M4A · FLAC · AAC · OGG</div>
     <div class="dz-file" id="dz-file">
       <div class="dz-file-icon"><svg viewBox="0 0 16 16"><path d="M3 2h7l3 3v9H3z"/><path d="M10 2v3h3"/></svg></div>
       <span id="dz-fname"></span>
     </div>
-    <input type="file" id="file-input" accept="video/*,audio/*">
+    <input type="file" id="file-input" accept=".mp4,.mov,.mkv,.webm,.avi,.mp3,.wav,.m4a,.flac,.ogg,.aac,video/mp4,video/quicktime,video/x-matroska,video/webm,audio/mpeg,audio/wav,audio/mp4,audio/flac,audio/ogg,audio/aac">
   </div>
 
   <div class="controls" style="justify-content:center">
@@ -305,6 +305,7 @@ let GradioClient = null;
   try {
     const mod = await import('https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js');
     GradioClient = mod.Client;
+    window._hf = mod.handle_file;
   } catch(e) {
     console.warn('Gradio client preload failed, will retry on transcribe');
   }
@@ -513,6 +514,7 @@ async function doTranscribe(){
     if(!GradioClient){
       const mod = await import('https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js');
       GradioClient = mod.Client;
+      window._hf = mod.handle_file;
     }
 
     const client = await GradioClient.connect(HF_SPACE, {
@@ -534,18 +536,22 @@ async function doTranscribe(){
 
     // Call Gradio API — inputs must match app.py order exactly:
     // [file, model_choice, language, timestamps, translate]
+    const hf = window._hf || (f => f);
     const result = await client.predict('/run', [
-      selFile,
+      hf(selFile),
       MODEL_STRINGS[md.name],
       lang === 'Auto' ? 'Auto Detect' : lang,
       tsOn,
       trVal === 'Off' ? 'Transcribe' : 'Translate to English'
     ]);
 
-    if(result && result.data && result.data[0]){
-      finishTranscript(result.data[0], md);
+    const transcript = result?.data?.[0];
+    if(transcript && transcript.trim().length > 0){
+      finishTranscript(transcript, md);
+    } else if(transcript !== undefined){
+      throw new Error('Transcript came back empty. The audio may have no speech, or try a different model.');
     } else {
-      throw new Error('No transcript returned. Try again or check your Hugging Face space.');
+      throw new Error('No response from Hugging Face. Make sure your space is Running and try again.');
     }
 
   } catch(err){
