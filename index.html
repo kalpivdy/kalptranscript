@@ -215,6 +215,7 @@ input[type=file]{display:none}
       <div class="dd-menu" id="lang-menu">
         <div class="dd-item sel" onclick="selLang('Auto',this)">Auto detect<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
         <div class="dd-item" onclick="selLang('English',this)">English<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
+        <div class="dd-item" onclick="selLang('Hinglish (Roman)',this)">Hinglish (Roman)<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
         <div class="dd-item" onclick="selLang('Hindi',this)">Hindi<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
         <div class="dd-item" onclick="selLang('Spanish',this)">Spanish<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
         <div class="dd-item" onclick="selLang('French',this)">French<svg class="dd-chk" viewBox="0 0 12 12"><polyline points="1.5 6 5 9.5 10.5 2.5"/></svg></div>
@@ -366,7 +367,7 @@ function closeAll(){
 document.addEventListener('click', e=>{ if(!e.target.closest('.dd-wrap')) closeAll(); });
 
 function selModel(i){ mi=i; document.querySelectorAll('#model-menu .dd-item').forEach((d,j)=>d.className='dd-item'+(j===i?' sel':'')); document.getElementById('mval').textContent=modelData[i].name; closeAll(); }
-function selLang(val){ lang=val; document.querySelectorAll('#lang-menu .dd-item').forEach(d=>{ const m=d.textContent.trim().startsWith(val)||(val==='Auto'&&d.textContent.includes('Auto')); d.className='dd-item'+(m?' sel':''); }); document.getElementById('lval').textContent=val==='Auto detect'?'Auto':val; closeAll(); }
+function selLang(val){ lang=val; document.querySelectorAll('#lang-menu .dd-item').forEach(d=>{ const m=d.textContent.trim().startsWith(val)||(val==='Auto'&&d.textContent.includes('Auto')); d.className='dd-item'+(m?' sel':''); }); const _lbl={'Auto detect':'Auto','Hinglish (Roman)':'Hinglish'}; document.getElementById('lval').textContent=_lbl[val]||val; closeAll(); }
 function selTr(val){ trVal=val; document.querySelectorAll('#tr-menu .dd-item').forEach(d=>{ const m=(val==='Off'&&d.textContent.trim()==='Off')||(val!=='Off'&&d.textContent.includes('English')); d.className='dd-item'+(m?' sel':''); }); document.getElementById('trval').textContent=val; closeAll(); }
 function toggleTs(){ tsOn=!tsOn; document.getElementById('ts-dot').className='tdot'+(tsOn?' on':''); document.getElementById('ts-pill').className='toggle-pill'+(tsOn?' on':''); }
 
@@ -525,7 +526,7 @@ async function doTranscribe(){
     const result=await client.predict('/run',[
       selFile,
       MODEL_STRINGS[md.name],
-      lang==='Auto'?'Auto Detect':lang,
+      lang==='Auto'?'Auto Detect':(lang==='Hinglish (Roman)'?'Hinglish (Roman)':lang),
       tsOn,
       trVal==='Off'?'Off':'Translate to English'
     ]);
