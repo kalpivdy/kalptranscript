@@ -26,6 +26,31 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 48px
 .hero-title em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--blue-light)}
 .hero-sub{font-size:13px;color:var(--dim);text-align:center;margin-bottom:40px;font-weight:300}
 
+/* URL PANEL */
+.platform-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;width:100%;max-width:540px}
+.p-chip{font-size:10px;color:#2a4a6a;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:100px;padding:3px 10px;letter-spacing:0.06em}
+.url-panel{width:100%;max-width:540px;background:var(--surface);border:1px dashed #1a2d3a;border-radius:14px;padding:28px 24px;text-align:center;cursor:text;transition:all 0.2s;margin-bottom:0}
+.url-panel.focused{border-color:var(--blue);background:#07101c}
+.url-panel.has-url{border-color:var(--blue);background:#07101c;border-style:solid}
+.url-panel-icon{width:28px;height:28px;stroke:#252525;fill:none;display:block;margin:0 auto 12px;transition:stroke 0.2s}
+.url-panel.focused .url-panel-icon,.url-panel.has-url .url-panel-icon{stroke:var(--blue)}
+.url-panel-label{font-size:13px;color:#888;margin-bottom:10px}
+.url-panel-label span{color:var(--blue-light)}
+.url-panel-input{width:100%;background:transparent;border:none;outline:none;font-size:13px;color:var(--text);font-family:'Geist',sans-serif;text-align:center;padding:0}
+.url-panel-input::placeholder{color:#2a2a2a;font-size:12px}
+.url-panel-hint{font-size:11px;color:#555;margin-top:6px;transition:color 0.2s}
+.url-actions{width:100%;max-width:540px;display:none;gap:8px;margin-top:10px}
+.url-actions.show{display:flex}
+.btn-transcribe-url{flex:1;background:var(--blue);color:#fff;border:none;border-radius:10px;padding:12px 16px;font-family:'Geist',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.18s}
+.btn-transcribe-url:hover{background:var(--blue-light);color:#000}
+.btn-transcribe-url:disabled{opacity:0.5;cursor:not-allowed}
+.btn-download-url{background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--blue);border-radius:10px;padding:12px 16px;font-family:'Geist',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.18s;white-space:nowrap}
+.btn-download-url:hover{background:#0a1628;border-color:var(--blue);color:var(--blue-light)}
+.btn-download-url:disabled{opacity:0.5;cursor:not-allowed}
+.url-divider{display:flex;align-items:center;gap:12px;width:100%;max-width:540px;margin:14px 0}
+.url-divider span{font-size:11px;color:#2a2a2a;white-space:nowrap}
+.url-divider::before,.url-divider::after{content:'';flex:1;height:1px;background:#161616}
+
 /* DROPZONE */
 .dropzone{width:100%;max-width:540px;background:var(--surface);border:1px dashed #1a2d3a;border-radius:14px;padding:40px 24px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
 .dropzone:hover,.dropzone.active{border-color:var(--blue);background:#07101c}
@@ -180,6 +205,46 @@ input[type=file]{display:none}
   <div class="eyebrow">AI-powered speech to text</div>
   <h1 class="hero-title">Turn any video into<br><em>clean text.</em></h1>
   <p class="hero-sub">Drop a file below and get a transcript in seconds.</p>
+
+  <!-- Platform chips -->
+  <div class="platform-chips">
+    <span class="p-chip">Instagram</span>
+    <span class="p-chip">YouTube</span>
+    <span class="p-chip">Twitter / X</span>
+    <span class="p-chip">Facebook</span>
+  </div>
+
+  <!-- URL panel — matches dropzone style -->
+  <div class="url-panel" id="url-panel" onclick="document.getElementById('url-input').focus()">
+    <svg class="url-panel-icon" id="url-panel-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+      <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+    </svg>
+    <div class="url-panel-label" id="url-panel-label">Paste a link from <span>Instagram, YouTube, Twitter or Facebook</span></div>
+    <input class="url-panel-input" id="url-input" type="text"
+      placeholder="https://www.instagram.com/reel/..."
+      oninput="onUrlInput()"
+      onfocus="document.getElementById('url-panel').classList.add('focused')"
+      onblur="if(!this.value.trim())document.getElementById('url-panel').classList.remove('focused')"
+      onkeydown="if(event.key==='Enter')doTranscribeUrl()"
+    />
+    <div class="url-panel-hint" id="url-panel-hint">Supports reels, shorts, tweets, and public posts</div>
+  </div>
+
+  <!-- URL action buttons — appear after valid URL -->
+  <div class="url-actions" id="url-actions">
+    <button class="btn-transcribe-url" id="url-btn" onclick="doTranscribeUrl()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Transcribe
+    </button>
+    <button class="btn-download-url" id="download-btn" onclick="doDownloadUrl()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download video
+    </button>
+  </div>
+
+  <!-- Divider -->
+  <div class="url-divider"><span>or upload a file</span></div>
 
   <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
     <svg class="dz-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -387,6 +452,116 @@ function setFile(f){
   document.getElementById('trans-btn').className='trans-btn show';
 }
 
+function onUrlInput(){
+  const val = document.getElementById('url-input').value.trim();
+  const supported = ['instagram.com','youtube.com','youtu.be','twitter.com','x.com','facebook.com','fb.watch'];
+  const valid = val.length > 8 && supported.some(s => val.includes(s));
+  const panel = document.getElementById('url-panel');
+  const actions = document.getElementById('url-actions');
+  const hint = document.getElementById('url-panel-hint');
+  const label = document.getElementById('url-panel-label');
+  if(valid){
+    panel.className = 'url-panel has-url';
+    actions.className = 'url-actions show';
+    hint.style.color = '#2a4a6a';
+    hint.textContent = 'Link detected — choose an action below';
+    label.innerHTML = '<span>Link ready</span>';
+  } else {
+    panel.className = 'url-panel focused';
+    actions.className = 'url-actions';
+    hint.style.color = '#555';
+    hint.textContent = 'Supports reels, shorts, tweets, and public posts';
+    label.innerHTML = 'Paste a link from <span>Instagram, YouTube, Twitter or Facebook</span>';
+  }
+}
+
+async function doDownloadUrl(){
+  const url = document.getElementById('url-input').value.trim();
+  if(!url) return;
+  const btn = document.getElementById('download-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Downloading...';
+  try{
+    if(!GradioClient){
+      const mod = await import("https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js");
+      GradioClient = mod.Client;
+    }
+    const client = await GradioClient.connect(HF_SPACE);
+    const result = await client.predict('/handle_download', [url]);
+    const fileData = result?.data?.[0];
+    if(fileData && fileData.url){
+      const a = document.createElement('a');
+      a.href = fileData.url;
+      a.download = fileData.orig_name || 'video.mp4';
+      a.click();
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Downloaded!';
+      setTimeout(()=>{
+        btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download video';
+        btn.disabled = false;
+      }, 2000);
+    } else {
+      throw new Error('Download failed');
+    }
+  }catch(err){
+    showError(err.message || 'Download failed. Try again.');
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download video';
+  }
+}
+
+async function doTranscribeUrl(){
+  const url = document.getElementById('url-input').value.trim();
+  if(!url) return;
+  const btn = document.getElementById('url-btn');
+  btn.disabled = true;
+  btn.textContent = 'Downloading...';
+  document.getElementById('processing').className = 'loading-overlay show';
+  document.getElementById('load-title').textContent = 'Downloading from URL...';
+  setStep(0);
+
+  const md = modelData[mi];
+
+  try{
+    if(!GradioClient){
+      const mod = await import('https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js');
+      GradioClient = mod.Client;
+    }
+    const client = await GradioClient.connect(HF_SPACE, {
+      status_callback:(status)=>{
+        if(status.stage==='SLEEPING'||status.stage==='BUILDING'){
+          document.getElementById('load-title').textContent='Waking up AI — please wait ~30s...';
+        }
+      }
+    });
+
+    document.getElementById('load-title').textContent = 'Downloading & transcribing...';
+    setStep(1);
+    startClock(5, md); // assume ~5MB for URL videos
+    setStep(2);
+
+    const result = await client.predict('/transcribe_url',[
+      url,
+      MODEL_STRINGS[md.name],
+      lang==='Auto'?'Auto Detect':lang,
+      tsOn,
+      trVal==='Off'?'Off':'Translate to English'
+    ]);
+
+    const transcript = result?.data?.[0];
+    if(transcript && transcript.trim().length > 0 && !transcript.startsWith('Error')){
+      // Use a fake selFile for display
+      selFile = {name: url.split('/').pop() || 'video'};
+      finishTranscript(transcript, md);
+    } else {
+      throw new Error(transcript || 'No transcript returned');
+    }
+  }catch(err){
+    showError(err.message || String(err));
+    btn.disabled = false;
+    btn.textContent = 'Transcribe this link →';
+  }
+}
+
 function goBack(){
   document.getElementById('result-state').className='';
   document.getElementById('upload-state').className='';
@@ -546,6 +721,9 @@ async function doTranscribe(){
   }
 }
 
+window.onUrlInput=onUrlInput;
+window.doTranscribeUrl=doTranscribeUrl;
+window.doDownloadUrl=doDownloadUrl;
 window.toggleMenu=toggleMenu;
 window.selModel=selModel;
 window.selLang=selLang;
