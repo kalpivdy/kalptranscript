@@ -440,7 +440,7 @@ async function doTranscribe() {
     // Make prediction request
     // According to app.py, inputs are: file_input, model_choice, language, timestamps, translate
     let modelRawStr = MODEL_STRINGS[apiModel] || (apiModel + "   — Fastest");
-    const result = await client.predict(0, [
+    const result = await client.predict("/run", [
       handle_file(selFile),
       modelRawStr,
       apiLang,
