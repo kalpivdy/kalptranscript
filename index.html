@@ -395,6 +395,131 @@ window.selModel=selModel;
 window.selLang=selLang;
 window.selTr=selTr;
 window.toggleTs=toggleTs;
+
+async function doTranscribe() {
+  if (!selFile) return alert("Please select a file.");
+  if (!GradioClient) return alert("Gradio Client is still loading. Please wait a moment.");
+
+  // Map JS values to app.py expected values
+  let apiModel = document.getElementById('mval').textContent; // 'tiny', 'base', etc.
+  let apiLang = lang === 'Auto' ? 'Auto Detect' : lang;
+  let apiTr = trVal === 'Off' ? 'Off' : 'Translate to English';
+  let apiTs = tsOn;
+
+  // Update UI: Hide form controls, show processing overlay
+  document.getElementById('dropzone').style.display = 'none';
+  document.querySelector('.controls').style.display = 'none';
+  document.getElementById('processing').classList.add('show');
+  
+  // ETA Timer
+  const fileSizeMB = selFile.size / (1024 * 1024);
+  const totalEta = calcETA(fileSizeMB, apiModel);
+  let elap = 0;
+  document.getElementById('load-time').textContent = "0s";
+  document.getElementById('load-estimate').textContent = `~${totalEta}s estimated`;
+  clearInterval(clockTimer);
+  clockTimer = setInterval(() => {
+    elap++;
+    document.getElementById('load-time').textContent = elap + "s";
+    if (elap > totalEta) document.getElementById('load-estimate').textContent = "Almost done...";
+  }, 1000);
+
+  try {
+    document.getElementById('lstep0').classList.replace('active', 'done');
+    document.getElementById('lstep1').classList.add('active');
+
+    // Connect to the Hugging Face Space
+    const client = await GradioClient(HF_SPACE);
+    
+    document.getElementById('lstep1').classList.replace('active', 'done');
+    document.getElementById('lstep2').classList.add('active');
+
+    // Make prediction request
+    // According to app.py, inputs are: file_input, model_choice, language, timestamps, translate
+    const result = await client.predict("/predict", [
+      selFile,
+      apiModel,
+      apiLang,
+      apiTs,
+      apiTr
+    ]);
+
+    // Gradio returns an array of outputs: [output, plain_output]
+    let transcriptText = result.data[0];
+
+    clearInterval(clockTimer);
+    
+    // Switch to Result State
+    document.getElementById('upload-state').classList.add('hidden');
+    document.getElementById('result-state').classList.add('show');
+    
+    // Populate Results
+    document.getElementById('t-text').textContent = transcriptText;
+    document.getElementById('file-chip').textContent = selFile.name;
+    document.getElementById('ap-model').textContent = apiModel;
+    document.getElementById('ap-lang').textContent = apiLang;
+    document.getElementById('ap-tr').textContent = apiTr;
+    document.getElementById('ap-ts').textContent = apiTs ? "On" : "Off";
+    
+    // Word Count
+    const words = transcriptText.trim() ? transcriptText.trim().split(/\s+/).length : 0;
+    document.getElementById('ap-words').textContent = words;
+    
+    document.getElementById('t-status').innerHTML = "Finished";
+
+  } catch (err) {
+    clearInterval(clockTimer);
+    console.error(err);
+    alert("Transcription failed: " + err.message);
+    // Revert UI on failure
+    document.getElementById('dropzone').style.display = 'block';
+    document.querySelector('.controls').style.display = 'flex';
+    document.getElementById('processing').classList.remove('show');
+  }
+}
+
+function goBack() {
+  document.getElementById('result-state').classList.remove('show');
+  document.getElementById('upload-state').classList.remove('hidden');
+  
+  // Reset UI elements
+  document.getElementById('dropzone').style.display = 'block';
+  document.querySelector('.controls').style.display = 'flex';
+  document.getElementById('processing').classList.remove('show');
+  document.getElementById('t-status').innerHTML = `<span class="pulse" id="pulse-dot"></span><span id="status-txt">Transcribing</span>`;
+  
+  // Reset file selection
+  selFile = null;
+  document.getElementById('file-input').value = "";
+  document.getElementById('dz-main').style.display = 'block';
+  document.getElementById('dz-hint').style.display = 'block';
+  document.getElementById('dz-file').style.display = 'none';
+  document.getElementById('dropzone').className = 'dropzone';
+  document.getElementById('trans-btn').className = 'trans-btn';
+}
+
+function copyText() {
+  const text = document.getElementById('t-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Transcript copied to clipboard!");
+  }).catch(err => {
+    alert("Failed to copy text.");
+  });
+}
+
+function downloadTxt() {
+  const text = document.getElementById('t-text').textContent;
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (selFile ? selFile.name.replace(/\.[^/.]+$/, "") : "transcript") + ".txt";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 window.goBack=goBack;
 window.copyText=copyText;
 window.downloadTxt=downloadTxt;
