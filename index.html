@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kalp Transcript — Kalpi Edition</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%230a0a0a'/><rect x='22' y='40' width='12' height='20' rx='6' fill='%2358B8FF'/><rect x='44' y='20' width='12' height='60' rx='6' fill='%233066BE'/><rect x='66' y='35' width='12' height='30' rx='6' fill='%2358B8FF'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='15' y='45' width='70' height='40' rx='8' fill='%23112a46'/><polygon points='43,55 43,75 60,65' fill='%23ffffff'/><g transform='rotate(-12 50 35)'><rect x='15' y='25' width='70' height='18' rx='4' fill='%23112a46'/><polygon points='25,25 35,25 30,43 20,43' fill='%23ffffff'/><polygon points='45,25 55,25 50,43 40,43' fill='%23ffffff'/><polygon points='65,25 75,25 70,43 60,43' fill='%23ffffff'/></g></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -320,10 +320,12 @@ input[type=file]{display:none}
 const HF_SPACE = 'Kalp97/KalpTranscript';
 
 let GradioClient = null;
+let handle_file = null;
 (async () => {
   try {
     const mod = await import('https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js');
-    GradioClient = mod.Client;
+    GradioClient = mod.Client || mod.client;
+    handle_file = mod.handle_file;
   } catch(e) { console.warn('Gradio preload failed'); }
 })();
 
@@ -437,9 +439,10 @@ async function doTranscribe() {
 
     // Make prediction request
     // According to app.py, inputs are: file_input, model_choice, language, timestamps, translate
-    const result = await client.predict("/predict", [
-      selFile,
-      apiModel,
+    let modelRawStr = MODEL_STRINGS[apiModel] || (apiModel + "   — Fastest");
+    const result = await client.predict(0, [
+      handle_file(selFile),
+      modelRawStr,
       apiLang,
       apiTs,
       apiTr
